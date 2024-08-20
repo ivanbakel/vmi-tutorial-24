@@ -1,0 +1,23 @@
+# A _CoqProject file is a cross-IDE and build-system file which describes how
+# the files in your Coq project are laid out.
+
+# "-Q" sets how to map files and folders into a namespace
+# For example:
+# -Q src my_custom_project_namespace
+-Q examples examples
+
+# Lines which are file and folder names are included in the project
+# For example
+# src/my_file.v
+#
+# This includes "my_file.v" from the directory "src" in the project. If combined
+# with the above "-Q" directive, then the modules in "my_file.v" will appear under
+# the "my_custom_project_namespace" namespace.
+#
+# All the files in a folder can also be included
+# For example
+# src/
+#
+# This includes all the Coq files in the directory "src".
+
+examples/
