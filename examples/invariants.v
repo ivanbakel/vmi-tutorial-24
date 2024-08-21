@@ -1,13 +1,6 @@
-From iris.prelude Require Import options.
-From iris.algebra Require Import gmultiset.
 From iris.base_logic Require Import invariants.
-From iris.bi.lib Require Export fractional.
-From iris.program_logic Require Export weakestpre.
-From iris.heap_lang Require Export lang.
 From iris.heap_lang Require Import proofmode notation.
-From iris.heap_lang.lib Require Export rw_lock.
-From iris.prelude Require Import options.
-
+From iris Require Import prelude.
 
 Section invariants.
 
