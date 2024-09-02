@@ -1,0 +1,14 @@
+name: "iris-vmi-example"
+synopsis: "Iris program verification tutorial for the VMI summer retreat 2024"
+opam-version: "2.0"
+maintainer: "anonymous"
+authors: [ "anonymous" ]
+depends: [
+  "coq-iris" {= "4.2.0"}
+  "coq-stdpp" {= "1.10.0"}
+  "coq" {= "8.19.2"}
+  "coqide" {= "8.19.2"}
+]
+build: [
+  ["make"]
+]
