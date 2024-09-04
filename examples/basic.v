@@ -5,55 +5,53 @@ Section basic.
 
 Context `{!heapGS Σ}.
 
-Lemma load_value x v :
-  {{{ x ↦ v }}}
-    ! #x
-  {{{ RET v; x ↦ v }}}.
+Implicit Type v : val.
+Implicit Type l : loc.
+
+Lemma load_value l v :
+  l ↦ v ⊢
+  WP ! #l
+  {{ v, l ↦ v }}.
 Proof.
-  iIntros (Φ) "Hx HΦ".
+  iIntros "Hl".
   wp_load.
-  iApply "HΦ".
-  iFrame "Hx".
+  iFrame "Hl".
   done.
 Qed.
 
-Lemma store_value x v v':
-  {{{ x ↦ v }}}
-    #x <- v'
-  {{{ RET #(); x ↦ v' }}}.
+Lemma store_value l v v':
+  l ↦ v ⊢
+  WP #l <- v'
+  {{ _, l ↦ v' }}.
 Proof.
-  iIntros (Φ) "Hx HΦ".
+  iIntros "Hl".
   wp_store.
-  iApply "HΦ".
-  iFrame "Hx".
+  iFrame "Hl".
   done.
 Qed.
 
 Lemma alloc_value v :
-  {{{ True }}}
-    let: "x" := ref #v in
-    ! "x"
-  {{{ RET #v; True }}}.
+⊢ WP let: "x" := ref v in
+     ! "x"
+  {{ v', ⌜v' = v⌝ }}.
 Proof.
-  iIntros (Φ) "Htrue HΦ".
   wp_alloc l as "Hl".
   wp_let.
   wp_load.
-  iApply "HΦ".
+  iModIntro.
   done.
 Qed.
 
-Lemma load_add_store x (n : Z) :
-  {{{ x ↦ #n }}}
-    #x <- !#x + #1
-  {{{ RET #(); x ↦ #(n + 1) }}}.
+Lemma load_add_store l (n : Z) :
+  l ↦ #n ⊢ 
+  WP #l <- !#l + #1
+  {{ _,  l ↦ #(n + 1) }}.
 Proof.
-  iIntros (Φ) "Hx HΦ".
+  iIntros "Hl".
   wp_load.
   wp_pures.
   wp_store.
-  iApply "HΦ".
-  iFrame "Hx".
+  iFrame "Hl".
   done.
 Qed.
 
@@ -71,14 +69,13 @@ Qed.
    replacement. The `%Z` marker tells Coq to interpret the terms as integers. This
    tactic generates a subgoal for the replacement, which `lia` immediately solves. *)
 Lemma two_plus_two_is_four :
-  {{{ True }}}
-    let: "x" := ref #0 in
-    "x" <- !"x" + #2 ;;
-    "x" <- !"x" + #2 ;;
+⊢ WP let: "x" := ref #0 in
+     "x" <- !"x" + #2 ;;
+     "x" <- !"x" + #2 ;;
     ! "x"
-  {{{ RET #4; True }}}.
+  {{ v, ⌜v = #4⌝ }}.
 Proof.
   (* TODO: Fill in! *)
-  Admitted.
+Admitted.
 
 End basic.
