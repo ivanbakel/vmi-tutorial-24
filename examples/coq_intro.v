@@ -56,4 +56,4 @@ lia -- proves goals about linear (in)equations in the integers / natural numbers
 
 *)
 
-End basic.
+End coq_intro.
