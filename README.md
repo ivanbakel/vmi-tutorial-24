@@ -12,7 +12,9 @@ To open, follow the following steps:
 2. Open the command palette (`F1` or `Ctrl+Shift+P`)
 3. Run the command `>Dev Containers: Open Folder in Container`
 4. Wait for it to finish (might take a few minutes)
-5. That's it. To see whether it works, open `examples/basic.v` and press `Alt+ArrowDown` to step through the file
+5. That's it. To see whether it works, open `examples/basic.v` and press `Alt+ArrowDown` to step through the file.
+6. For working on the other file, you need to run `make`. For this, open a new terminal, which will automatically open in the dev container.
+7. To close it all again (once the workshop is over), go to File -> Close Remote Connection.
 
 ### Required Software
 

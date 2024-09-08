@@ -48,6 +48,17 @@ Qed.
    satisfies [P] already - all we do is read from it! Therefore, we expect to be
    able to prove this WP just from knowing that [l ↦ v ∗ P v]. *)
 
+Lemma simple_addition :
+⊢ WP ((#1 + #1) + (#1 + #1))
+  {{ v, ⌜ v = #4 ⌝}}.
+Proof.
+  iStartProof.
+  wp_pure _.
+  wp_pure _.
+  wp_pure _.
+  eauto with lia.
+Qed.
+
 Lemma load_value l v :
   l ↦ v ⊢
   WP ! #l
@@ -121,5 +132,39 @@ Lemma two_plus_two_is_four :
 Proof.
   (* TODO: Fill in! *)
 Admitted.
+
+Definition add_four : val := 
+  λ: "x", "x" <- !"x" + #4.
+
+Lemma add_four_adds_four l (n : Z) :
+  l ↦ #n ⊢ 
+  WP add_four #l
+  {{ _, l ↦ #(n + 4)}}.
+Proof.
+  unfold add_four.
+  (* TODO: Fill in! *)
+  (* Hint: this is even easier than the above *)
+Admitted.
+
+Lemma modular_reasoning_is_nice :
+⊢ WP let: "l1" := ref #42 in
+     let: "l2" := ref #1333 in
+     add_four "l2" ;;
+     !"l1"
+  {{ x, ⌜ x = #42 ⌝}}.
+Proof.
+  (* A more complicated proof, using the lemma above *)
+  wp_alloc l1 as "Hl1".
+  wp_alloc l2 as "Hl2".
+  do 2 wp_pure _.
+  wp_bind (add_four _).
+  (* wp_wand helps us if the postcondition does not fit as written but if we can prove it is equivalent. *)
+  iApply (wp_wand with "[Hl2]").
+  { iApply add_four_adds_four. iApply "Hl2". }
+  simpl. iIntros (v) "Hl2".
+  wp_pures.
+  wp_load.
+  done.
+Qed.
 
 End basic.
