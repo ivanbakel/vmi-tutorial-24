@@ -61,12 +61,6 @@ Definition flag_before_update : Z := 0.
 Definition flag_during_update : Z := 1.
 Definition flag_after_update : Z := 2.
 
-Definition flag_invariant γ flag loc : iProp Σ :=
-  ∃ f, flag ↦ #f ∗
-    (loc ↦ #2 ∗ ⌜f = flag_before_update⌝ ∗ own γ Pending ∨
-     ⌜f = flag_during_update⌝ ∗ own γ Pending ∨
-     loc ↦ #4 ∗ ⌜f = flag_after_update⌝ ∗ own γ Shot).
-
 Definition thread_body  : val :=
   rec: "thread_body" "flag" "loc" :=
     let: "pp" := CmpXchg "flag" #flag_before_update #flag_during_update in
@@ -80,6 +74,22 @@ Definition thread_body  : val :=
         then 
           "thread_body" "flag" "loc"
         else #().
+
+Definition main : expr :=
+  let: "flag" := ref #flag_before_update in
+  let: "x" := ref #2 in
+  (thread_body "flag" "x" |||
+    thread_body "flag" "x") ;;
+  ! "x".
+
+(* Here come the proofs *)
+
+
+Definition flag_invariant γ flag loc : iProp Σ :=
+  ∃ f, flag ↦ #f ∗
+    (loc ↦ #2 ∗ ⌜f = flag_before_update⌝ ∗ own γ Pending ∨
+     ⌜f = flag_during_update⌝ ∗ own γ Pending ∨
+     loc ↦ #4 ∗ ⌜f = flag_after_update⌝ ∗ own γ Shot).
 
 Lemma thread_helper γ flag loc N :
   inv N (flag_invariant γ flag loc)
@@ -133,13 +143,6 @@ Proof.
     iModIntro.
     (* TODO: We are actually done here, since we know we are already "Shot". So there is nothing really left to do.*)
 Qed.
-
-Definition main : expr :=
-  let: "flag" := ref #flag_before_update in
-  let: "x" := ref #2 in
-  (thread_body "flag" "x" |||
-    thread_body "flag" "x") ;;
-  ! "x".
 
 Lemma threads :
   ⊢ WP main {{ v, ⌜v = #4⌝ }}.
