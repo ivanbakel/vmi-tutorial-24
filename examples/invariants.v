@@ -16,13 +16,11 @@ Context `{!heapGS Σ}.
    We can create new invariants by proving the fact that they hold is true. *)
 
 Lemma inv_alloc N :
-  {{{ True }}}
-    ref #1
-  {{{ x, RET #x; inv N (∃ (n : Z), x ↦ #n ∗ ⌜(n > 0)%Z⌝) }}}.
+  ⊢ WP ref #1 {{ x, ∃ (l : loc), ⌜#l = x⌝ ∗ inv N (∃ (n : Z), l ↦ #n ∗ ⌜(n > 0)%Z⌝) }}.
 Proof.
-  iIntros (Φ) "Htrue HΦ".
   wp_alloc x as "Hx".
-  iApply "HΦ".
+  iExists x.
+  iSplitL ""; first done.
   iApply (inv_alloc with "[Hx]").
   iNext.
   iExists 1.
@@ -39,11 +37,10 @@ Qed.
    proof. All this has to happen in the same program step, for correctness. *)
 
 Lemma read_inv x N :
-  {{{ inv N (∃ (n : Z), x ↦ #n ∗ ⌜(n > 0)%Z⌝) }}}
-    ! #x
-  {{{ n, RET #n; ⌜(n > 0)%Z⌝}}}.
+  inv N (∃ (n : Z), x ↦ #n ∗ ⌜(n > 0)%Z⌝)
+  ⊢ WP ! #x {{ v, ∃ (n : Z), ⌜#n = v⌝ ∗  ⌜(n > 0)%Z⌝}}.
 Proof.
-  iIntros (Φ) "#Hinv HΦ".
+  iIntros "#Hinv".
   Fail wp_load.
   iInv "Hinv" as (n) ">[Hx %Hge0]" "Hclose".
   wp_load.
@@ -52,7 +49,7 @@ Proof.
     iExists n.
     iFrame "Hx".
     eauto with lia. }
-  iApply "HΦ".
+  iExists n.
   done.
 Qed.
 
@@ -66,11 +63,10 @@ Qed.
    different [n] - because we incremented it! *)
 
 Lemma fetch_and_add_inv x N :
-  {{{ inv N (∃ (n : Z), x ↦ #n ∗ ⌜(n > 0)%Z⌝) }}}
-    FAA #x #1
-  {{{ n, RET #n; ⌜(n > 0)%Z⌝ }}}.
+  inv N (∃ (n : Z), x ↦ #n ∗ ⌜(n > 0)%Z⌝)
+  ⊢ WP FAA #x #1 {{ v, ∃ (n : Z), ⌜#n = v⌝ ∗ ⌜(n > 0)%Z⌝ }}.
 Proof.
-  iIntros (Φ) "#Hinv HΦ".
+  iIntros "#Hinv".
   iInv "Hinv" as (n) ">[Hx %Hge0]" "Hclose".
   wp_faa.
   iMod ("Hclose" with "[Hx]").
@@ -78,7 +74,7 @@ Proof.
     iExists (n + 1)%Z.
     iFrame "Hx".
     eauto with lia. }
-  iApply "HΦ".
+  iExists n.
   done.
 Qed.
 
@@ -91,11 +87,10 @@ Qed.
    double the value of [x] - and indeed, thanks to concurrency, we might not!
    Other threads might modify [x] between us reading and writing it. *)
 Lemma non_atomic_op_inv x N :
-  {{{ inv N (∃ (n : Z), x ↦ #n ∗ ⌜(n > 0)%Z⌝) }}}
-    #x <- #2 * ! #x
-  {{{ RET #() ; True }}}.
+  inv N (∃ (n : Z), x ↦ #n ∗ ⌜(n > 0)%Z⌝)
+  ⊢ WP #x <- #2 * ! #x {{ _, True }}.
 Proof.
-  iIntros (Φ) "#Hinv HΦ".
+  iIntros "#Hinv".
   wp_bind (! _)%E.
   iInv "Hinv" as (n) ">[Hx %Hge0]" "Hclose".
   wp_load.
@@ -113,7 +108,6 @@ Proof.
     iExists (2 * n)%Z.
     iFrame "Hx".
     eauto with lia. }
-  iApply "HΦ".
   done.
 Qed.
 
@@ -122,12 +116,16 @@ Qed.
    techniques to specify programs such as this one if we want a stronger result. *)
 
 Lemma multiread x N :
-  {{{ inv N (∃ (n : Z), x ↦ #n ∗ ⌜(n > 0)%Z⌝) }}}
+  inv N (∃ (n : Z), x ↦ #n ∗ ⌜(n > 0)%Z⌝)
+  ⊢ WP
     let: "n1" := ! #x in
     let: "n2" := ! #x in
     "n1" + "n2"
-  {{{ n, RET #n ; ⌜(n > 0)%Z⌝ }}}.
-Proof. (* TODO: Fill in! *)
+    {{ v, ∃ (n : Z), ⌜#n = v⌝ ∗ ⌜(n > 0)%Z⌝ }}.
+Proof.
+  (* Always introduce the invariant - it's "persistent", so it gets a "#" *)
+  iIntros "#Hinv".
+  (* TODO: Fill in! *)
   Admitted.
 
 End invariants.
