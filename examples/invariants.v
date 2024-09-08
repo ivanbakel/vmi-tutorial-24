@@ -27,8 +27,7 @@ Proof.
   iNext.
   iExists 1.
   iFrame "Hx".
-  iPureIntro.
-  lia.
+  eauto with lia.
 Qed.
 
 (* We also want to use facts held in invariants (because we know they're true!)
@@ -52,8 +51,7 @@ Proof.
   { iNext.
     iExists n.
     iFrame "Hx".
-    iPureIntro.
-    lia. }
+    eauto with lia. }
   iApply "HΦ".
   done.
 Qed.
@@ -79,8 +77,7 @@ Proof.
   { iNext.
     iExists (n + 1)%Z.
     iFrame "Hx".
-    iPureIntro.
-    lia. }
+    eauto with lia. }
   iApply "HΦ".
   done.
 Qed.
@@ -106,8 +103,7 @@ Proof.
   { iNext.
     iExists n.
     iFrame "Hx".
-    iPureIntro.
-    lia. }
+    eauto with lia. }
   iModIntro.
   wp_pures.
   iInv "Hinv" as (?) ">[Hx _]" "Hclose".
@@ -116,8 +112,7 @@ Proof.
   { iNext.
     iExists (2 * n)%Z.
     iFrame "Hx".
-    iPureIntro.
-    lia. }
+    eauto with lia. }
   iApply "HΦ".
   done.
 Qed.
