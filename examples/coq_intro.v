@@ -60,13 +60,21 @@ Proof.
   eauto with lia. (* lia can do the algebra for us *)
 Qed.
 
+Lemma iFrame_example P Q : P ∗ Q ⊢ Q ∗ P.
+Proof.
+  iIntros "[HP HQ]".
+  (* solves the `P` *)
+  iFrame "HP".
+  iFrame "HQ".
+Qed.
+
+
 (* A tactic overview:
 
 Here, `x` is a stand-in for a variable, and `H` a stand-in for a hypothesis.
 
 iIntros "%H" -- introduce a pure hypothesis 
 iIntros "H" -- introduce a hypothesis 
-iExists x -- solve an existential quantifier
 
 iApply H -- applies a lemma
 iApply "H" -- applies a separation logic hypothesis in the context
@@ -78,7 +86,17 @@ iLeft -- Solve a disjunction (or) by proving the left side
 iRight -- Analogous but the right side
 iDestruct "H" as "[H1|H2]" -- destruct a disjunction that is assumed. This generates two new cases
 
+iExists x -- solve an existential quantifier
+iDestruct "H" as "[%x H]" -- destructs an assumed existential quantifier. `x` is the witness' name, `H` the assumption about it.
+
+iFrame "Hyp" -- if the contains "Hyp" as well as a bunch of different things, all in a separating conjunction (∗), then iFrame will "remove" parts.
+
 eauto with lia -- proves goals about linear (in)equations in the integers / natural numbers.
+
+
+
+Note that you can often combine `iDestruct` and `iIntros`.
+For example, `iIntros [H1 H2]` does `iIntros` and then immediately destruct it.
 
 *)
 
