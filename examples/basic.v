@@ -21,12 +21,11 @@ Implicit Types l k : loc.
 
    This turns out to be useful for many reasons. For example, if we are talking
    about two heap locations, we automatically learn that they aren't the same. *)
-
 Lemma disjoint l k v u:
   l ↦ v ∗ k ↦ u ⊢ ⌜l ≠ k⌝.
 Proof.
   iIntros "[Hl Hk]".
-  iApply (mapsto_ne with "Hl Hk").
+  iApply (pointsto_ne with "Hl Hk").
 Qed.
 
 (* Program reasoning in Iris can be done in various ways. For this tutorial we

@@ -20,4 +20,6 @@
 #
 # This includes all the Coq files in the directory "src".
 
-examples/
+examples/basic.v
+examples/coq_intro.v
+examples/invariants.v
