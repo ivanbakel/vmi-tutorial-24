@@ -2,6 +2,7 @@ From iris.heap_lang Require Import notation proofmode par.
 From iris.algebra Require Import agree csum excl.
 From iris.base_logic.lib Require Import invariants.
 From iris Require Import prelude.
+Require Import examples.basic.
 
 Section ghost_state.
 
@@ -105,7 +106,7 @@ Proof.
     iInv "Hinv" as ">(%f&Hflag&Hcases)" "Hclose".
     iDestruct "Hcases" as "[(Hc&_)|[(->&Hpending)|(Hc&_)]]".
     1: { iExFalso.
-        (* TODO: This is contradictory. Use `pointsto_ne` and `iPoseProof` *) }
+        (* TODO: This is contradictory. Use `only_one_pointsto` *) }
     2: { (* TODO like case 1*) }
     (* TODO: Update the flag. *)
     

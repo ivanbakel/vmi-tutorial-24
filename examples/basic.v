@@ -28,6 +28,14 @@ Proof.
   iApply (pointsto_ne with "Hl Hk").
 Qed.
 
+Lemma only_one_pointsto l v u:
+  l ↦ v ∗ l ↦ u ⊢ False.
+Proof.
+  iIntros "[Hl Hk]".
+  iPoseProof (disjoint with "[$Hl $Hk]") as "%HH".
+  done.
+Qed.
+
 (* Program reasoning in Iris can be done in various ways. For this tutorial we
    use *weakest preconditions*. The weakest precondition (WP) of an expression is
    parameterised by a post-condition. For a given post-condition, the WP is the
