@@ -1,5 +1,5 @@
 {
-  "image": "ghcr.io/jojodeveloping/iris-docker:master",
+  "image": "ghcr.io/jojodeveloping/iris-docker:vmi24",
   "customizations": {
     "vscode": {
       "extensions": [
